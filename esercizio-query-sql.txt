@@ -147,20 +147,48 @@ INNER JOIN awards
 ON award_videogame.award_id = awards.id;
 
 -- 6- Selezionare categorie e classificazioni PEGI dei videogiochi che hanno ricevuto recensioni da 4 e 5 stelle, mostrandole una sola volta (3363)
-SELECT categories.name, pegi_labels.name
+SELECT  categories.id, categories.name, pegi_labels.id, pegi_labels.name, videogames.id, videogames.name
 FROM categories
 INNER JOIN category_videogame 
-ON category_videogame.category_id = categories.id
+ON categories.id = category_videogame.category_id  
 INNER JOIN videogames
 ON category_videogame.videogame_id = videogames.id
 INNER JOIN reviews
-ON reviews.videogame_id = videogames.id
+ON videogames.id = reviews.videogame_id  
 INNER JOIN pegi_label_videogame
-ON pegi_label_videogame.videogame_id = videogames.id
+ON videogames.id = pegi_label_videogame.videogame_id 
 INNER JOIN pegi_labels
-ON pegi_labels.id = pegi_label_videogame.pegi_label_id
+ON pegi_label_videogame.pegi_label_id = pegi_labels.id  
 WHERE reviews.rating IN (4, 5)
-GROUP BY videogames.name
+GROUP BY categories.id, categories.name, pegi_labels.id, pegi_labels.name, videogames.id, videogames.name
 
 
+-- 7- Selezionare quali giochi erano presenti nei tornei nei quali hanno partecipato i giocatori il cui nome inizia per 'S' (474)
+SELECT DISTINCT videogames.id, videogames.name
+FROM videogames
+INNER JOIN tournament_videogame
+ON videogames.id = tournament_videogame.videogame_id
+INNER JOIN tournaments
+ON tournament_videogame.tournament_id = tournaments.id
+INNER JOIN player_tournament
+ON tournaments.id = player_tournament.tournament_id
+INNER JOIN players
+ON player_tournament.player_id = players.id
+WHERE players.name LIKE 'S%';
+
+-- 8- Selezionare le città in cui è stato giocato il gioco dell'anno del 2018 (36)
+SELECT tournaments.city, videogames.name, awards.name, tournaments.year
+FROM tournaments
+INNER JOIN tournament_videogame
+ON tournaments.id = tournament_videogame.tournament_id
+INNER JOIN videogames
+ON tournament_videogame.videogame_id = videogames.id
+INNER JOIN award_videogame
+ON videogames.id = award_videogame.videogame_id
+INNER JOIN awards
+ON award_videogame.award_id = awards.id
+WHERE awards.id = 1 AND tournaments.year = 2018
+GROUP BY tournaments.city, videogames.name, awards.name, tournaments.year
+
+-- 9- Selezionare i giocatori che hanno giocato al gioco più atteso del 2018 in un torneo del 2019 (3306)
 
