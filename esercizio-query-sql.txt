@@ -162,7 +162,6 @@ ON pegi_label_videogame.pegi_label_id = pegi_labels.id
 WHERE reviews.rating IN (4, 5)
 GROUP BY categories.id, categories.name, pegi_labels.id, pegi_labels.name, videogames.id, videogames.name
 
-
 -- 7- Selezionare quali giochi erano presenti nei tornei nei quali hanno partecipato i giocatori il cui nome inizia per 'S' (474)
 SELECT DISTINCT videogames.id, videogames.name
 FROM videogames
